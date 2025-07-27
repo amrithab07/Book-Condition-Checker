@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Condition Checker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --primary-light: #dbeafe;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --background: #f0f4f8;
+            --card-bg: #ffffff;
+            --text: #374151;
+            --text-light: #6b7280;
+            --text-lighter: #9ca3af;
+            --text-dark: #1f2937;
+            --border: #e5e7eb;
+            --upload-bg: #f9fafb;
+            --upload-border: #d1d5db;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+        
+        [data-theme="dark"] {
+            --primary: #3b82f6;
+            --primary-dark: #1e40af;
+            --primary-light: #1e3a8a;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --background: #0f172a;
+            --card-bg: #1e293b;
+            --text: #e5e7eb;
+            --text-light: #9ca3af;
+            --text-lighter: #6b7280;
+            --text-dark: #f3f4f6;
+            --border: #334155;
+            --upload-bg: #1f2937;
+            --upload-border: #4b5563;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .app-container {
+            max-width: 960px;
+            width: 95%;
+            margin: 0 auto;
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--card-bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 10px;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+            z-index: 100;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+        
+        @media (min-width: 768px) {
+            .main-content {
+                grid-template-columns: 1.5fr 1fr;
+            }
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 24px;
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-title i {
+            margin-right: 8px;
+            color: var(--primary);
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            background-color: var(--upload-bg);
+            color: var(--text);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+        
+        .upload-area {
+            border: 2px dashed var(--upload-border);
+            border-radius: var(--radius-md);
+            padding: 32px 24px;
+            text-align: center;
+            cursor: pointer;
+            background-color: var(--upload-bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--text-lighter);
+            margin-bottom: 16px;
+        }
+        
+        .upload-text {
+            margin-bottom: 16px;
+        }
+        
+        .upload-text strong {
+            display: block;
+            font-size: 1.125rem;
+            margin-bottom: 4px;
+            color: var(--text);
+        }
+        
+        .upload-text span {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+        
+        .upload-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 10px 24px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .upload-btn i {
+            margin-right: 6px;
+        }
+        
+        .upload-btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        #preview-container {
+            display: none;
+            margin-top: 16px;
+        }
+        
+        #preview {
+            max-width: 100%;
+            border-radius: var(--radius-md);
+            max-height: 250px;
+            object-fit: contain;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        .preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .preview-title {
+            font-weight: 500;
+            color: var(--text);
+        }
+        
+        .preview-actions button {
+            background-color: transparent;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 16px 0;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            background-color: var(--upload-bg);
+            color: var(--text);
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(59, 130, 246, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s infinite linear;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .result-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .result-placeholder {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-lighter);
+            text-align: center;
+            padding: 40px 0;
+        }
+        
+        .result-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+        
+        .result-placeholder h3 {
+            font-size: 1.25rem;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+        
+        #result {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .result-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            font-size: 1.5rem;
+        }
+        
+        .icon-good { background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .icon-fair { background-color: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .icon-poor { background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        
+        .detail-item {
+            padding: 16px;
+            border-radius: var(--radius-md);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .detail-item i {
+            font-size: 1.25rem;
+            margin-right: 16px;
+        }
+        
+        .detail-good { background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .detail-fair { background-color: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .detail-poor { background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        .detail-info { background-color: rgba(59, 130, 246, 0.1); color: var(--primary); }
+        
+        .alert {
+            background-color: rgba(245, 158, 11, 0.1);
+            border-left: 3px solid var(--warning);
+            padding: 16px;
+            border-radius: var(--radius-md);
+            margin-top: 24px;
+            display: none;
+        }
+        
+        .upload-highlight {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+        }
+    </style>
+</head>
+<body>
+    <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode">
+        <i class="fas fa-moon"></i>
+    </button>
+    
+    <div class="app-container">
+        <div class="header">
+            <h1>📚 Book Condition Checker</h1>
+            <p>Upload a photo of your book to assess its condition</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="card upload-card">
+                <h2 class="card-title"><i class="fas fa-camera"></i> Upload Book Image</h2>
+                
+                <div class="input-group">
+                    <label class="input-label" for="bookId">Book ID</label>
+                    <input type="text" id="bookId" placeholder="Enter the book's identification number" class="form-input">
+                </div>
+                
+                <div class="upload-area" id="dropZone">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <div class="upload-text">
+                        <strong>Drag and drop image here</strong>
+                        <span>JPG, JPEG or PNG files only</span>
+                    </div>
+                    <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-image"></i> Choose File
+                    </button>
+                    <input type="file" id="fileInput" accept=".jpg,.jpeg,.png" style="display: none;">
+                </div>
+                
+                <div id="preview-container">
+                    <div class="preview-header">
+                        <span class="preview-title">Image Preview</span>
+                        <div class="preview-actions">
+                            <button id="removePreview"><i class="fas fa-times"></i> Remove</button>
+                        </div>
+                    </div>
+                    <img id="preview" alt="Book Image Preview">
+                </div>
+                
+                <div class="loading" id="loading">
+                    <div class="loading-spinner"></div>
+                    Analyzing image... This may take a few moments.
+                </div>
+            </div>
+            
+            <div class="card result-card">
+                <h2 class="card-title"><i class="fas fa-clipboard-check"></i> Analysis Results</h2>
+                
+                <div class="result-content">
+                    <div class="result-placeholder" id="result-placeholder">
+                        <i class="fas fa-search"></i>
+                        <h3>No Results Yet</h3>
+                        <p>Upload a book image to see condition analysis results here</p>
+                    </div>
+                    
+                    <div id="result">
+                        <!-- Results will be populated here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+        const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const savedTheme = localStorage.getItem('theme');
+        
+        if (savedTheme === 'dark' || (!savedTheme && prefersDarkMode)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            newTheme === 'dark' 
+                ? themeIcon.classList.replace('fa-moon', 'fa-sun')
+                : themeIcon.classList.replace('fa-sun', 'fa-moon');
+        });
+        
+        // File Upload Logic
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const preview = document.getElementById('preview');
+        const previewContainer = document.getElementById('preview-container');
+        const removePreviewBtn = document.getElementById('removePreview');
+        const loading = document.getElementById('loading');
+        const result = document.getElementById('result');
+        const resultPlaceholder = document.getElementById('result-placeholder');
+        
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false);
+            document.body.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false);
+        });
+        
+        // Highlight drop zone
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('upload-highlight'), false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('upload-highlight'), false);
+        });
+        
+        // Handle files
+        dropZone.addEventListener('drop', e => handleFiles(e.dataTransfer.files), false);
+        fileInput.addEventListener('change', e => handleFiles(e.target.files), false);
+        
+        function handleFiles(files) {
+            if (!files.length) return;
+            const file = files[0];
+            
+            if (!file.type.match('image.*')) {
+                alert('Please upload a valid image file (JPG, JPEG, or PNG).');
+                return;
+            }
+            
+            result.style.display = 'none';
+            resultPlaceholder.style.display = 'flex';
+            
+            // Display preview
+            const reader = new FileReader();
+            reader.onload = e => {
+                preview.src = e.target.result;
+                previewContainer.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+            
+            // Process upload
+            uploadFile(file);
+        }
+        
+        // Remove preview
+        removePreviewBtn.addEventListener('click', function() {
+            previewContainer.style.display = 'none';
+            fileInput.value = '';
+            result.style.display = 'none';
+            resultPlaceholder.style.display = 'flex';
+        });
+        
+        function uploadFile(file) {
+            const formData = new FormData();
+            const bookId = document.getElementById('bookId').value;
+            
+            formData.append('file', file);
+            formData.append('book_id', bookId);
+            
+            loading.style.display = 'block';
+            result.style.display = 'none';
+            resultPlaceholder.style.display = 'none';
+            
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                loading.style.display = 'none';
+                result.style.display = 'block';
+                
+                if (data.error) {
+                    displayError(data.error);
+                } else {
+                    displayResult({
+                        condition: data.condition,
+                        confidence: data.confidence,
+                        alert: data.alert
+                    });
+                }
+            })
+            .catch(error => {
+                loading.style.display = 'none';
+                displayError('Failed to process image. Please try again.');
+            });
+        }
+        
+        // Mock response generator
+        function generateMockResponse(bookId) {
+            const conditions = ['Good', 'Fair', 'Poor'];
+            const condition = conditions[Math.floor(Math.random() * conditions.length)];
+            
+            if (!bookId) {
+                return { error: 'Book ID is required for analysis.' };
+            }
+            
+            const confidence = 0.7 + (Math.random() * 0.28);
+            let alert = condition === 'Poor' ? 'This book may require restoration before being added to circulation.' : null;
+            
+            return { condition, confidence, alert };
+        }
+        
+        function displayResult(data) {
+            const condition = data.condition.toLowerCase();
+            let iconClass, statusClass;
+            
+            switch (condition) {
+                case 'good': iconClass = 'fas fa-check-circle'; statusClass = 'icon-good'; break;
+                case 'fair': iconClass = 'fas fa-exclamation-circle'; statusClass = 'icon-fair'; break;
+                case 'poor': iconClass = 'fas fa-times-circle'; statusClass = 'icon-poor'; break;
+                default: iconClass = 'fas fa-question-circle'; statusClass = 'icon-poor';
+            }
+            
+            const now = new Date();
+            const dateTime = now.toLocaleString();
+            
+            let resultHTML = `
+                <div class="result-header">
+                    <div class="result-icon ${statusClass}">
+                        <i class="${iconClass}"></i>
+                    </div>
+                    <div class="result-title">
+                        <h3>${data.condition} Condition</h3>
+                        <p>Analysis completed at ${dateTime}</p>
+                    </div>
+                </div>
+                
+                <div class="result-details">
+                    <div class="detail-item detail-${condition}">
+                        <i class="${iconClass}"></i>
+                        <div class="detail-content">
+                            <h4>Condition Assessment</h4>
+                            <p>${data.condition}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item detail-info">
+                        <i class="fas fa-chart-pie"></i>
+                        <div class="detail-content">
+                            <h4>Confidence Score</h4>
+                            <p>${(data.confidence * 100).toFixed(1)}%</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            if (data.alert) {
+                resultHTML += `
+                    <div class="alert" style="display: block">
+                        <div class="alert-title">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Important Note
+                        </div>
+                        <div class="alert-content">${data.alert}</div>
+                    </div>
+                `;
+            }
+            
+            result.innerHTML = resultHTML;
+            result.style.display = 'block';
+        }
+        
+        function displayError(errorMessage) {
+            result.innerHTML = `
+                <div class="result-header">
+                    <div class="result-icon icon-poor">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="result-title">
+                        <h3>Analysis Error</h3>
+                        <p>We encountered a problem</p>
+                    </div>
+                </div>
+                
+                <div class="result-details">
+                    <div class="detail-item detail-poor">
+                        <i class="fas fa-times-circle"></i>
+                        <div class="detail-content">
+                            <h4>Error Message</h4>
+                            <p>${errorMessage}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item detail-info">
+                        <i class="fas fa-lightbulb"></i>
+                        <div class="detail-content">
+                            <h4>Suggestion</h4>
+                            <p>Please try with a different image or check your connection.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            result.style.display = 'block';
+            resultPlaceholder.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
