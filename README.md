@@ -27,7 +27,7 @@ The dataset was collected and labelled by me.
 | **Total** | **325** |
 
 - Folder structure used for training: `damaged_books/` and `good_books/`
-- Split: 80% training / 20% validation (`validation_split=0.2`)
+- Split: 68% train / 12% validation / 20% test
 - Images are resized to 224 × 224 and scaled to [0, 1]
 
 <!-- Add a line here describing what counts as "Damaged" (e.g. torn pages, cover wear, water damage, spine damage) and how you took the photos. -->
@@ -51,8 +51,10 @@ Defined in `train_model.py`.
 
 | Metric | Value |
 |---|---|
-| Validation accuracy | _add your value_ |
-| Precision / Recall (Damaged class) | _add your value_ |
+| Validation accuracy | 78.5% |
+| Damaged class: precision / recall | 0.71 / 0.86 |
+| Good class: precision / recall | 0.87 / 0.72 |
+| Decision threshold | 0.65 |
 
 <!-- Add a confusion matrix image here, e.g. ![Confusion matrix](images/confusion_matrix.png) -->
 
